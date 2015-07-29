@@ -1,3 +1,5 @@
+package com.dstevens.mail;
+
 import java.util.function.Supplier;
 
 import javax.mail.Session;
@@ -17,8 +19,8 @@ public class MailMessageTest {
 				new MailSessionBuilder().withSMTP("smtp.gmail.com").
 								 withPort(465).
 								 withSocketFactoryClass(SSLSocketFactory.class).
-								 withUsername("wastevens@gmail.com").
-								 withPassword("B090182d!").
+								 withUsername("").
+								 withPassword("").
 								 build();
 		MailMessage message = new MailMessage(supplier.get());
 		
