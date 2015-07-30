@@ -45,12 +45,16 @@ public class MailMessage {
 	
 	public void send() {
         try {
-        	Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(fromAddress, fromName));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
-            msg.setSubject(subject);
-            msg.setText(body);
-            Transport.send(msg);
+        	if(session.getProperties().get("courier.enabled").equals(Boolean.TRUE)) {
+        		Message msg = new MimeMessage(session);
+        		msg.setFrom(new InternetAddress(fromAddress, fromName));
+        		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
+        		msg.setSubject(subject);
+        		msg.setText(body);
+        		Transport.send(msg);
+        	} else {
+        		System.out.println("Email not enabled");
+        	}
         } catch (MessagingException | UnsupportedEncodingException e) {
         	throw new IllegalStateException("Failed to send message to " + toAddress, e);
         }		

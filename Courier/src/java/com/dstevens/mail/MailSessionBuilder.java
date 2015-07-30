@@ -9,6 +9,7 @@ import javax.mail.Session;
 
 public class MailSessionBuilder {
 
+	private boolean enabled = false;
 	private String smtp = "";
 	private String username = "";
 	private String password = "";
@@ -16,6 +17,11 @@ public class MailSessionBuilder {
 	private boolean startTLS = false;
 	private Class<?> socketFactoryClass;
 
+	public MailSessionBuilder enabled(boolean enabled) {
+		this.enabled = enabled;
+		return this;
+	}
+	
 	public MailSessionBuilder withSMTP(String smtp) {
 		this.smtp = smtp;
 		return this;
@@ -48,6 +54,7 @@ public class MailSessionBuilder {
 	
 	public Supplier<Session> build() {
 		Properties properties = new Properties();
+		properties.put("courier.enabled", enabled);
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.starttls.enable", Boolean.toString(startTLS));
 		properties.put("mail.smtp.socketFactory.class", socketFactoryClass.getName());

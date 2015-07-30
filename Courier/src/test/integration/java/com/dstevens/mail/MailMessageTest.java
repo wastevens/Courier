@@ -16,16 +16,18 @@ public class MailMessageTest {
 	@Test
 	public void testSendMailMessageViaGMail() {
 		Supplier<Session> supplier = 
-				new MailSessionBuilder().withSMTP("smtp.gmail.com").
+				new MailSessionBuilder().
+				                 enabled(true).
+				                 withSMTP("smtp.gmail.com").
 								 withPort(465).
 								 withSocketFactoryClass(SSLSocketFactory.class).
-								 withUsername("").
-								 withPassword("").
+								 withUsername("username").
+								 withPassword("password").
 								 build();
 		MailMessage message = new MailMessage(supplier.get());
 		
 		message.from("int-test@address.com", "Integration Test From name");
-		message.to("wastevens@gmail.com");
+		message.to("destination");
 		message.subject("Integration test email subject");
 		message.body("Integration test email body");
 		message.send();
