@@ -1,6 +1,7 @@
 package com.dstevens.mail;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ExecutorService;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -12,9 +13,13 @@ import javax.mail.internet.MimeMessage;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 
 public class MailMessage {
 
+	private static final Logger logger = Logger.getLogger(MailMessage.class);
+	
+	private final ExecutorService executorService;
 	private Session session;
 	private String fromAddress;
 	private String fromName;
@@ -22,8 +27,9 @@ public class MailMessage {
 	private String subject;
 	private String body;
 
-	public MailMessage(Session session) {
+	public MailMessage(Session session, ExecutorService executorService) {
 		this.session = session;
+		this.executorService = executorService;
 	}
 	
 	public MailMessage from(String fromAddress, String fromName) {
@@ -48,20 +54,22 @@ public class MailMessage {
 	}
 	
 	public void send() {
-        try {
-        	if(session.getProperties().get("courier.enabled").equals(Boolean.TRUE)) {
-        		Message msg = new MimeMessage(session);
-        		msg.setFrom(new InternetAddress(fromAddress, fromName));
-        		msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
-        		msg.setSubject(subject);
-        		msg.setText(body);
-        		Transport.send(msg);
-        	} else {
-        		System.out.println("Email not enabled");
-        	}
-        } catch (MessagingException | UnsupportedEncodingException e) {
-        	throw new IllegalStateException("Failed to send message to " + toAddress, e);
-        }		
+		if(session.getProperties().get("courier.enabled").equals(Boolean.TRUE)) {
+			executorService.execute(() -> {
+				try {
+					Message msg = new MimeMessage(session);
+					msg.setFrom(new InternetAddress(fromAddress, fromName));
+					msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toAddress));
+					msg.setSubject(subject);
+					msg.setText(body);
+					Transport.send(msg);
+				} catch (MessagingException | UnsupportedEncodingException e) {
+					logger.error("Failed to send message to " + toAddress, e);
+				}		
+			});
+		} else {
+			logger.info("Courier not enabled, and thus did not send " + this);
+		}
 	}
 	
 	@Override

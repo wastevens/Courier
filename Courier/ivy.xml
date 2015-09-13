@@ -19,6 +19,7 @@
         <dependency org="org.hibernate" name="hibernate-entitymanager" rev="4.3.7.Final" conf="default;sources;javadoc"/>
         <dependency org="com.sun.mail" name="all" rev="1.5.2" conf="default;sources;javadoc"/>
         <dependency org="com.sun.mail" name="javax.mail" rev="1.5.2" conf="default;sources;javadoc"/>
+        <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.6" conf="default;sources;javadoc"/>
     	
     	<dependency org="org.springframework" name="spring-test" rev="4.0.3.RELEASE" conf="testDefault->default;testSources->sources;testJavadoc->javadoc"/>
         <dependency org="org.mockito" name="mockito-all" rev="1.8.4" conf="testDefault->default;testSources->sources;testJavadoc->javadoc"/>

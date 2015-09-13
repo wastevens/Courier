@@ -1,5 +1,6 @@
 package com.dstevens.mail;
 
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import javax.mail.Session;
@@ -24,7 +25,7 @@ public class MailMessageTest {
 								 withUsername("username").
 								 withPassword("password").
 								 build();
-		MailMessage message = new MailMessage(supplier.get());
+		MailMessage message = new MailMessage(supplier.get(), Executors.newCachedThreadPool());
 		
 		message.from("int-test@address.com", "Integration Test From name");
 		message.to("destination");
